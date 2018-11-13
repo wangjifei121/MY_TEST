@@ -1,0 +1,376 @@
+作业
+1.配置好阿里云yum源
+	1.为什么要配置yum源？
+		因为默认的yum源是centos的仓库源，国外的仓库下载肯定慢呀
+		因此配置阿里云源，加速yum下载软件包
+
+	#通过wget下载 http://mirrors.aliyun.com/repo/Centos-7.repo，
+	通过一个-O的参数，把这个文件写入到/etc/yum.repos.d/CentOS-Base.repo，并且重命名为CentOS-Base.repo
+	
+	wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+    生成yum缓存
+	yum clean all&& yum makecache
+    下载redis，yum下载后，启动redis
+	#配置epel源
+	wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+	
+	yum install redis   #  这就会去epel源中下载redis
+
+2.下载lrzsz工具，方便linux和windows互相传文件
+yum install lrzsz
+
+3.如何手动启动网卡？
+systemctl start/restart/stop  mysql               #centos7底下才有
+service mysql start/stop/restart 					# centos6底下才有这个命令
+ifup     ens33/eth-0/ens16777736
+ifdown  ens33
+
+
+4.linux的超级用户是什么？如何查看用户身份信息？
+root   id  
+
+#用户信息存在哪里？
+cat /etc/passwd 
+
+
+5.简单描述linux的 用户管理
+
+普通用户 root用户 用户组
+创建用户  useradd
+删除用户  userdel 
+更改用户密码  passwd  username 
+切换用户   su -  username 
+用root身份执行命令   sudo ls /root/
+创建用户组  groupadd
+
+更改文件属主   chown username   文件
+更改文件属组   chgrp  groupname  文件 
+更改文件权限  
+chmod  u+w  文件		
+chmod  u+r  
+chmod  u+x  
+chmod  g+w 
+chmod  g+r
+chmod  g+x
+chmod  o+r
+chmod  o+w
+chmod  o+x
+
+r  w  x  
+4  2  1 
+
+chmod u-g-o  
+
+#最高权限是 
+chmod  777 文件
+-rwxrwxrwx
+#最低权限是
+chmod  000 文件夹
+d---------  文件夹
+
+
+
+
+
+
+
+
+6.如何创建普通用户，并且修改用户密码，然后使用普通用户登录
+useradd aa   passwd aa   su - aa
+
+
+7.在linux下如何切换用户
+su - aa 
+
+
+8.如何使用root身份执行普通用户的命令?请详细说明配置步骤
+visudo 给普通用户添加权限
+vi /etc/sudoers 
+## Allow root to run any commands anywhere
+root    ALL=(ALL)       ALL
+adu     ALL=(ALL)       ALL
+
+普通用户使用 sudo commond
+
+
+9.简述linux文件的权限有哪些？
+
+r w x 
+
+属主 属组 其他
+
+
+10.linux文件权限的755，700是什么意思？
+
+文件   root（属主）  root(属组)    other(其他人，例如xiaofeng)
+-      rw-           r--           r--. 1                     root    root  664 5月  11 2018 epel.repo
+755 
+user   group    other
+rwx    r-x      r-x
+
+属主是 可读可写可执行
+属组   可读 可执行 
+其他人   可读  可执行   
+
+
+700
+rwx   ---    ---    文件夹呢
+
+属主    rwx   可读（ls），可写（可以在文件夹内创建文本），可执行（可以切换进入目录）
+属组   ---
+其他人 ---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+属主 读写执行  属组 读执行 其他读执行
+属主 读写执行 
+
+11.如何修改test.py文件权限为700
+chmod  700 test.py
+
+
+
+12.如何修改   test.py    属组是oldboy?
+chgrp oldboy test.py 
+
+
+
+13.已知test.py文件权限是rwxr--r--，如何修改权限为rw-rw-rw
+rwxr--r--
+7  4   4
+
+chmod 666 test.py
+
+chmod 555 test.py
+      r-xr-xr-x 
+
+
+14.linux如何建立软连接？
+
+ln -s 源文件  链接文件
+
+ln -s /opt/python3/bin/python3.6     /usr/bin/python3 
+
+
+15.linux的PS1变量是什么？如何修改
+PS1='[\t \u@\h \w]\$'
+修改PS1变量的值
+
+name='tianzhu'
+
+
+1.vim vi 是什么？
+文本编辑器
+2.vim有哪几种模式？
+命令模式     输入模式  底线命令模式 
+vim test.py   进入命令模式
+输入 i/a/o  进入编辑模式
+按下esc，输入冒号  :  进入底线命令模式
+可以输入  :wq!   :q!  :x 
+
+
+
+3.命令模式有哪些？
+/xxxxxxx   查找 xxxxx  向下查找    按下小写的字母 n，进行向下查找结果
+?xxxxxxx	查找xxxxx  向上查找    按下小写的字母 n，进行向上 查找结果
+num+G     例如15+G，向下找到第15行       
+G         回到底部 
+
+num+yy     
+
+p
+D+G
+num+dd 
+H
+G
+u
+4.输入模式有哪些？
+ESC
+i 
+换行编辑o 
+删除光标选择并编辑s
+
+5.底线命令模式有哪些？
+:wq! :q! :x
+
+
+
+6.centos7用什么命令管理服务
+systemctl
+7.linux解析dns的命令是什么？
+
+/etc/hosts  测试一个域名解析
+
+119.29.29.29  域名/主机名
+在我的ping 这个域名/主机名的时候，linux本地会强制解析出119.29.29.29这个ip
+
+cat /etc/resolv.conf   #指定dns服务器地址的文件
+nameserver  119.29.29.29
+
+nslookup  pythonav.cn 
+
+nslookup 
+>
+>
+>
+>
+
+
+
+1.将/tmp/下所有内容压缩成All_log.tar.gz并且放到/home/下
+/home/All_log.tar.gz
+
+
+
+1.绝对路径的答题
+tar -cf  /home/All_log.tar.gz   /tmp/* 
+2.相对路径的答题
+cd /home/
+tar -cf  All_log.tar.gz   /tmp/* 
+
+
+tar -zcf /home/All_log.tar.gz /tmp/*
+#调用gzip压缩效率更高  -z参数
+
+
+2.解压缩Python源码包Python-3.7.0b3.tgz
+#解压python源码，并且显示过程
+tar -xvf  Python-3.7.0b3.tgz
+
+tar -zxf Python-3.7.0b3.tgz
+
+
+3.查看mysql端口状态
+netstat -ntplu |grep mysql(3306)
+
+
+4.如何查看nginx的进程
+ps -ef |grep nginx
+
+
+5.如何杀死nginx进程
+killall nginx
+
+ps -ef|grep nginx  #找到nginx进程的pid
+kill pid 
+
+
+6.如何修改linux中文
+echo $LANG 
+ vim /etc/locale.conf
+ LANG="zh_CN.UTF-8"
+ 
+source /etc/locale.conf
+
+
+7.如何统计/var/log大小
+
+du -sh /var/log    -s计算总和 -h 以kb,mb,gb,单位显示
+
+
+8.tree是什么作用?
+树状查看目录结构
+
+9.如何给linux添加一个dns服务器记录
+
+vim /etc/hosts
+127.0.0.1 eailoo.com
+
+etc/resolv.conf 
+nameserver  119.29.29.29
+nameserver  223.5.5.5
+nameserver  223.6.6.6
+
+
+
+
+
+
+
+10.每月的,5,15,25天的晚上5点50重启nginx
+
+*    *   *   *   * 
+分 时    日   月 周 
+
+50  17   5,15,25  *  *   重启nginx 
+
+
+50 17    5,15,25 * * systemctl restart nginx.service
+
+
+
+
+
+
+11.每周3到周5的深夜11点，备份/var/log /vmtp/
+
+*    *   *   *   * 
+分 时    日   月 周 
+0   23   *   *  3-5     cp -r /var/log/    /vmtp/
+
+
+
+
+
+
+
+
+
+
+12.每天早上6.30清空/tmp/内容
+*    *   *   *   * 
+分   时    日   月 周 
+
+30   6    *    *   *   rm -rf  /tmp/*
+
+
+
+
+
+
+13.每个星期三的下午6点到8点的第5，15分钟执行命令 command
+
+*    *   *   *   * 
+分   时    日   月 周 
+
+5,15   18-20   *  *  3   command
+
+
+
+
+
+
+14.编译安装软件有哪些步骤？
+1 下载解压
+2、配置 ./configure xxxxxxx
+3、make
+4、makeinstall
+15.如何修改python3的环境变量，以及软连接
+1、vim /etc/profile   export PATH=/opt/python3/bin/:$PATH
+2、ln -s /opt/python3/bin/python3 /user/bin/python3
+16.请在linux上启动django，windows上进行访问
+mkdir ~/.pip
+
+echo >>pip.conf<< EOF
+[global]
+timeout = 60
+index-url = http://pypi.douban.com/simple
+trusted-host = pypi.douban.com
+EOF
+
+pip3 install django==1.11.15
+
+django-admin startproject mytest_demo
+cd mytest_demo && python3 manage.py startapp api 
+python3 manage.py runserver 0.0.0.0:80
